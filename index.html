@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Manajemen Tugas-Tugas Perkuliahan"/>
+  <meta name="keywords" content="Manajemen Tugas,Tugas-Tugas,Tugas Perkuliahan,Jadwal Tugas"/>
+  <meta name="author" content="Iqbal Tri Agustian"/>
+  <title>Tugasin - Manajemen Tugas Mahasiswa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: orange;
+      color: #333;
+      padding: 1rem;
+    }
+    #app, #loginBox, #registerBox {
+      max-width: 600px;
+      background: #fff;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px hsl(0, 0%, 0%);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+    button {
+      background-color: #000000;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color:rgba(250, 142, 0, 0.829);
+    }
+    .filter {
+      text-align: left;
+      margin: 1rem 0;
+    }
+    .task {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      text-align: left;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .task h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    .completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .warning {
+      color: #dc2626;
+      font-weight: bold;
+    }
+    #logoutBtn {
+      background: #f87171;
+      border: none;
+    }
+    #logoutBtn:hover {
+      background: #ef4444;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHrKZYmmOSV394FX2vKZzVPH6l2DJ7q9k",
+      authDomain: "manajemen-tugas-55af7.firebaseapp.com",
+      databaseURL: "https://manajemen-tugas-55af7-default-rtdb.firebaseio.com",
+      projectId: "manajemen-tugas-55af7",
+      storageBucket: "manajemen-tugas-55af7.appspot.com",
+      messagingSenderId: "214329006801",
+      appId: "1:214329006801:web:b68437c69725e0255b83f0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+  </script>
+</head>
+<body>
+  <!-- Login Box -->
+  <div id="loginBox">
+    <h1>Silakan Login/Register Akun🧑‍💻</h1>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <button onclick="showRegister()">Register</button>
+  </div>
+
+  <!-- Register Box -->
+  <div id="registerBox" style="display: none;">
+    <h1>Register Akun🧑‍💻</h1>
+    <input type="email" id="regEmail" placeholder="Email" required />
+    <input type="password" id="regPassword" placeholder="Password" required />
+    <button onclick="register()">Daftar</button>
+    <button onclick="cancelRegister()">Batal</button>
+  </div>
+
+  <!-- Tugas Form & List -->
+  <div id="app" style="display: none;">
+    <h1>Masukkan Daftar Tugas📝</h1>
+    <form id="taskForm">
+      <input type="text" id="judul" placeholder="Judul Tugas" required>
+      <input type="text" id="mataKuliah" placeholder="Mata Kuliah" required>
+      <textarea id="deskripsi" placeholder="Deskripsi tugas"></textarea>
+      <h4>Masukkan Tanggal Deadline</h4>
+      <input type="date" id="deadline" required>
+      <button type="submit">Tambah Tugas</button>
+    </form>
+
+    <div class="filter">
+      <label>Filter:
+        <select id="filter">
+          <option value="all">Semua</option>
+          <option value="belum">Belum Selesai</option>
+          <option value="selesai">Selesai</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="taskList"></div>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    let tasks = [];
+    let currentUID = null;
+
+    const form = document.getElementById('taskForm');
+    const taskList = document.getElementById('taskList');
+    const filter = document.getElementById('filter');
+    const loginBox = document.getElementById('loginBox');
+    const registerBox = document.getElementById('registerBox');
+    const appBox = document.getElementById('app');
+
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          currentUID = userCredential.user.uid;
+          loginBox.style.display = 'none';
+          appBox.style.display = 'block';
+          loadTasks();
+        })
+        .catch((error) => {
+          alert("Login gagal: " + error.message);
+        });
+    }
+
+    function showRegister() {
+      loginBox.style.display = 'none';
+      registerBox.style.display = 'block';
+    }
+
+    function cancelRegister() {
+      registerBox.style.display = 'none';
+      loginBox.style.display = 'block';
+    }
+
+    function register() {
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          alert("Akun berhasil dibuat. Anda sekarang login.");
+          currentUID = userCredential.user.uid;
+          registerBox.style.display = 'none';
+          appBox.style.display = 'block';
+          loadTasks();
+        })
+        .catch((error) => {
+          alert("Registrasi gagal: " + error.message);
+        });
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        currentUID = null;
+        tasks = [];
+        loginBox.style.display = 'block';
+        appBox.style.display = 'none';
+        registerBox.style.display = 'none';
+      });
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      const selected = filter.value;
+      tasks.forEach((task, index) => {
+        if (selected === 'selesai' && !task.selesai) return;
+        if (selected === 'belum' && task.selesai) return;
+
+        const div = document.createElement('div');
+        div.className = 'task';
+
+        const title = document.createElement('h3');
+        title.textContent = task.judul;
+        if (task.selesai) title.classList.add('completed');
+
+        const info = document.createElement('p');
+        info.textContent = `${task.mataKuliah} - Deadline: ${task.deadline}`;
+
+        const desc = document.createElement('p');
+        desc.textContent = task.deskripsi;
+
+        const warning = document.createElement('p');
+        const daysLeft = (new Date(task.deadline) - new Date()) / (1000 * 3600 * 24);
+        if (!task.selesai && daysLeft <= 2) {
+          warning.textContent = '⚠ Deadline Hampir Tiba!';
+          warning.className = 'warning';
+        }
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.textContent = task.selesai ? 'Tandai Belum Selesai' : 'Tandai Selesai';
+        toggleBtn.onclick = () => {
+          tasks[index].selesai = !tasks[index].selesai;
+          saveTasks();
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Hapus';
+        delBtn.onclick = () => {
+          tasks.splice(index, 1);
+          saveTasks();
+        };
+
+        div.append(title, info, desc, warning, toggleBtn, delBtn);
+        taskList.appendChild(div);
+      });
+    }
+
+    function saveTasks() {
+      if (!currentUID) return;
+      db.ref('tasks/' + currentUID).set(tasks);
+    }
+
+    function loadTasks() {
+      if (!currentUID) return;
+      db.ref('tasks/' + currentUID).on('value', (snapshot) => {
+        tasks = snapshot.val() || [];
+        renderTasks();
+      });
+    }
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const task = {
+        judul: form.judul.value,
+        mataKuliah: form.mataKuliah.value,
+        deskripsi: form.deskripsi.value,
+        deadline: form.deadline.value,
+        selesai: false
+      };
+      tasks.push(task);
+      form.reset();
+      saveTasks();
+    };
+
+    filter.onchange = renderTasks;
+  </script>
+</body>
+</html>
