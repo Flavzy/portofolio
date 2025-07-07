@@ -1,0 +1,193 @@
+/* Reset CSS */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+body div {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: rgb(255, 255, 255);
+  color: #333;
+}
+
+.container{
+  width: 700px;
+  margin:auto;
+  background-color: #333;
+}
+
+#header {
+  background-color: #eaeaea;
+  font-family: 'Press Start 2P', monospace;
+}
+
+#header .judul{
+  font-size: 24px;
+  padding: 20px;
+}
+#app, #loginBox, #registerBox {
+  max-width: 600px;
+  background: #fff;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px hsl(0, 0%, 0%);
+}
+
+.footer{
+  background-color: #333;
+  padding:10px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+input, select, textarea, button {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+button {
+  background-color: #000000;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover {
+  background-color: #eaeaea;
+  color:#333
+}
+.filter {
+  text-align: left;
+  margin: 1rem 0;
+}
+.task {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.task h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+.warning {
+  color: #dc2626;
+  font-weight: bold;
+}
+#logoutBtn {
+  background: #f87171;
+  border: none;
+}
+#logoutBtn:hover {
+  background: #ef4444;
+}
+
+input, button {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    padding: 0;
+  }
+
+  #app, #loginBox, #registerBox {
+    width: 95%;
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  input, select, textarea, button {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+
+  #header .judul {
+    font-size: 18px;
+    padding: 15px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  #loginBox .form-row {
+    flex-direction: column;
+  }
+
+  #loginBox .form-row button {
+    width: 100%;
+  }
+}
+/* hp */
+@media (max-width: 480px) {
+  #loginBox .form-row {
+    flex-direction: column;
+  }
+
+  #loginBox .form-row button {
+    width: 100%;
+  }
+}

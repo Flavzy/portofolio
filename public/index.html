@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Manajemen Tugas-Tugas Perkuliahan" />
+  <meta name="keywords" content="Manajemen Tugas,Tugas-Tugas,Tugas Perkuliahan,Jadwal Tugas" />
+  <meta name="author" content="Iqbal Tri Agustian" />
+  <title>Tugasin - Manajemen Tugas Mahasiswa</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+
+<body>
+
+  <div class="container">
+    <div id="header">
+      <h1 class="judul">Manajemen Tugas</h1>
+    </div>
+
+    <!-- Login Box -->
+    <div id="loginBox">
+      <h1>Silakan Login/Register Akun🧑‍💻</h1>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button onclick="login()">Login</button>
+      <button onclick="showRegister()">Register</button>
+    </div>
+
+    <!-- Register Box -->
+    <div id="registerBox" style="display: none;">
+      <h1>Register Akun🧑‍💻</h1>
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword" placeholder="Password" required />
+      <button onclick="register()">Daftar</button>
+      <button onclick="cancelRegister()">Batal</button>
+    </div>
+
+    <!-- Tugas Form & List -->
+    <div id="app" style="display: none;">
+      <h1>Masukkan Daftar Tugas📝</h1>
+      <form id="taskForm">
+        <input type="text" id="judul" placeholder="Judul Tugas" required>
+        <input type="text" id="mataKuliah" placeholder="Mata Kuliah" required>
+        <textarea id="deskripsi" placeholder="Deskripsi tugas"></textarea>
+        <h4>Masukkan Tanggal Deadline</h4>
+        <input type="date" id="deadline" required>
+        <button type="submit">Tambah Tugas</button>
+      </form>
+
+      <div class="filter">
+        <label>Filter:
+          <select id="filter">
+            <option value="all">Semua</option>
+            <option value="belum">Belum Selesai</option>
+            <option value="selesai">Selesai</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="taskList"></div>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
+<div class="footer"></div>
+
+  </div>
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+
+</html>
